@@ -61,8 +61,13 @@ def execute_request(method, url, data=None, headers=None, data_format=None):
 
     mod_logging.debug('%s to %s with %s', method, url, data)
 
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    opener = mod_urllib2.build_opener(mod_urllib2.HTTPSHandler(context=ctx))
+
     body = None
-    opener = mod_urllib2.build_opener(mod_urllib2.HTTPHandler)
+
     if data:
         if method in PARAMS_IN_BODY_METHODS:
             if data_format == "json":
@@ -83,11 +88,6 @@ def execute_request(method, url, data=None, headers=None, data_format=None):
             request.add_header(key, value)
 
     try:
-
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-
         url = opener.open(request, data=body, timeout=5, context=ctx)
 
         http_code = url.getcode()
