@@ -82,7 +82,7 @@ def execute_request(method, url, data=None, headers=None, data_format=None):
             request.add_header(key, value)
 
     try:
-        url = opener.open(request, data=body, timeout=5)
+        url = opener.open(request, data=body, timeout=2)
 
         http_code = url.getcode()
         headers = headers
