@@ -22,6 +22,15 @@ CustomHttpResponse = mod_collections.namedtuple(
         'CustomHttpResponse',
         ('status_code', 'headers', 'content'))
 
+
+def get_timeout():
+    try:
+        from clay import config
+        return config.get('sms.infobip.timeout')
+    except ImportError:
+        return 2
+
+
 class CustomRequest(mod_urllib2.Request):
 
     def __init__(self, method, url, *args1, **args2):
@@ -82,7 +91,7 @@ def execute_request(method, url, data=None, headers=None, data_format=None):
             request.add_header(key, value)
 
     try:
-        url = opener.open(request, data=body, timeout=2)
+        url = opener.open(request, data=body, timeout=get_timeout())
 
         http_code = url.getcode()
         headers = headers
